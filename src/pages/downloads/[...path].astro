@@ -1,0 +1,19 @@
+---
+import Layout from '@/components/layout/Layout.astro';
+import { join } from 'node:path';
+import { lstatSync } from 'node:fs';
+import FilePage from '@/components/downloads/FilePage.astro';
+import DirectoryPage from '@/components/downloads/DirectoryPage/DirectoryPage.astro';
+
+const { path = '/' } = Astro.params;
+const reqPath = join('/media/share', path);
+const pathStats = lstatSync(reqPath);
+
+const isFile = pathStats.isFile();
+---
+
+<Layout title="Files">
+	<div class="container overflow-x-scroll pt-3">
+		{isFile ? <FilePage path={path} /> : <DirectoryPage path={reqPath} />}
+	</div>
+</Layout>

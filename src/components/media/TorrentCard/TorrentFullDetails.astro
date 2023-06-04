@@ -1,0 +1,44 @@
+---
+import { capitalize } from '@/helpers/utils/formatters/formatter';
+
+export type Props = {
+	data: [string, unknown][];
+};
+const { data } = Astro.props;
+---
+
+<details>
+	<summary class="cursor-pointer">More details</summary>
+</details>
+<div class="pl-3 pt-1">
+	<table
+		class="w-max [&>tbody>tr>td:first-child]:pr-2 [&>tbody>tr>td:first-child]:font-medium"
+	>
+		<tbody>
+			{
+				data.map(([key, value]) => (
+					<tr>
+						<td>{capitalize(key)}</td>
+						<td>{value}</td>
+					</tr>
+				))
+			}
+		</tbody>
+	</table>
+</div>
+
+<style lang="scss">
+	details {
+		& + div {
+			max-height: 0px;
+			opacity: 0;
+			overflow: hidden;
+			transition: all 0.4s;
+		}
+
+		&[open] + div {
+			max-height: 500px;
+			opacity: 1;
+		}
+	}
+</style>

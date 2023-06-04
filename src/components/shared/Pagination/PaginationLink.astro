@@ -1,0 +1,18 @@
+---
+export type Props = {
+	active?: boolean;
+	pageNumber: number;
+};
+
+const { active = false, pageNumber } = Astro.props;
+---
+
+<a href={active ? null : `?page=${pageNumber}`}>
+	<li
+		class={`min-w-[2rem] px-2 whitespace-nowrap rounded-lg py-1 text-center shadow-sm ${
+			active ? 'cursor-default bg-slate-400 text-white' : 'bg-white'
+		}`}
+	>
+		<slot />
+	</li>
+</a>

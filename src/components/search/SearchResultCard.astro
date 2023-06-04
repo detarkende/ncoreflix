@@ -1,0 +1,75 @@
+---
+import type { MultiSearchResult } from '@/server/types/tmdb';
+import Badge from '@/components/shared/Badge/Badge.astro';
+import Calendar from 'astro-heroicons/solid/Calendar.astro';
+import StarIcon from 'astro-heroicons/solid/Star.astro';
+
+export interface Props {
+	media: MultiSearchResult;
+}
+const { media } = Astro.props;
+
+const {
+	id,
+	title,
+	original_title,
+	poster_path,
+	release_date,
+	vote_average,
+	overview,
+	media_type,
+} = media;
+
+const imageUrl = poster_path
+	? `https://image.tmdb.org/t/p/w500/${poster_path}`
+	: 'https://images.placeholders.dev/?width=500&height=750';
+---
+
+<div
+	class="flex max-w-xl gap-5 rounded-2xl bg-white p-2 shadow-lg transition-transform ease-in-out hover:scale-[1.025] sm:h-56 sm:p-4"
+>
+	<a href={`/media/${media_type}/${id}`}>
+		<img
+			src={imageUrl}
+			alt={title}
+			class="h-52 rounded-xl bg-gray-200 object-cover sm:h-full sm:w-36"
+		/>
+	</a>
+	<div class="flex flex-1 flex-col gap-5 sm:p-2">
+		<div>
+			<a href={`/media/${media_type}/${id}`}>
+				<h2 class="text-xl font-semibold text-gray-800 line-clamp-2">
+					{
+						title ??
+							original_title ??
+							media.name ??
+							media.original_name ??
+							'-'
+					}
+				</h2>
+			</a>
+			<p class="text-ellipsis leading-relaxed line-clamp-3">
+				{overview || '-'}
+			</p>
+		</div>
+		<div class="mt-auto flex flex-wrap gap-3 text-sm">
+			{
+				!!release_date && (
+					<Badge
+						text={new Date(release_date).getFullYear()}
+						class="bg-blue-500"
+					>
+						<Calendar class="text-blue-600" slot="icon" />
+					</Badge>
+				)
+			}
+			{
+				!!vote_average && (
+					<Badge text={vote_average} class="bg-amber-500">
+						<StarIcon class="text-amber-500" slot="icon" />
+					</Badge>
+				)
+			}
+		</div>
+	</div>
+</div>

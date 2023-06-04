@@ -1,0 +1,60 @@
+---
+---
+
+<footer class="bg-gray-100 py-3">
+	<div class="container flex flex-col items-center">
+		<button class="hover:underline" id="get-notifications"
+			>Turn on notifications</button
+		>
+	</div>
+</footer>
+
+<script>
+	const button =
+		document.querySelector<HTMLButtonElement>('#get-notifications');
+	if (!button) {
+		throw new Error('No button or vapid key found');
+	}
+
+	const subscribeToPush = async (e: Event) => {
+		const subscriptionOptions: PushSubscriptionOptionsInit = {
+			applicationServerKey: import.meta.env.PUBLIC_VAPID_PUBLIC_KEY,
+			userVisibleOnly: true,
+		};
+
+		const swRegistration = await navigator.serviceWorker.getRegistration();
+		if (!swRegistration) throw Error('No srvice worker registered');
+		const subscription = await swRegistration.pushManager.subscribe(
+			subscriptionOptions,
+		);
+
+		const resp = await fetch('/api/push/new-subscription', {
+			method: 'POST',
+			headers: new Headers({ 'Content-Type': 'application/json' }),
+			body: JSON.stringify(subscription),
+		});
+
+		const data = await resp.json();
+		console.log('Subscription response: ', data);
+		updateButtonText();
+	};
+
+	if (!('Notification' in window)) {
+		button.innerHTML = 'Web Push is not supported';
+		button.removeEventListener('click', subscribeToPush);
+		button.setAttribute('disabled', 'true');
+		throw new Error('Push not supported');
+	}
+
+	const updateButtonText = () => {
+		const isNotificationsEnabled = Notification.permission === 'granted';
+		if (isNotificationsEnabled) {
+			button.innerHTML = 'Notifications are enabled';
+			button.removeEventListener('click', subscribeToPush);
+			button.setAttribute('disabled', 'true');
+		}
+	};
+
+	button.addEventListener('click', subscribeToPush);
+	updateButtonText();
+</script>

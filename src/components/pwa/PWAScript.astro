@@ -1,0 +1,28 @@
+<script>
+	var registration;
+	if ('serviceWorker' in navigator) {
+		const previousRegistrations =
+			await navigator.serviceWorker.getRegistrations();
+
+		if (!previousRegistrations || previousRegistrations.length === 0) {
+			console.log(
+				`We don't have a service worker registered. Registering one now...`,
+			);
+			registration = await navigator.serviceWorker.register(
+				'/service-worker.js',
+				{ scope: '/' },
+			);
+		} else {
+			console.log(
+				`We already have ${previousRegistrations.length} service worker(s). Updating now...`,
+			);
+			previousRegistrations.forEach((reg, i) => {
+				if (i === 0) {
+					reg.update();
+				} else {
+					reg.unregister();
+				}
+			});
+		}
+	}
+</script>

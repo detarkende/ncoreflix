@@ -1,0 +1,20 @@
+---
+export type Props = {
+	alt: string;
+	posterPath: string | null;
+};
+
+const { alt, posterPath } = Astro.props;
+
+const url =
+	posterPath === null
+		? 'https://images.placeholders.dev/?width=500&height=750'
+		: `https://image.tmdb.org/t/p/w500${posterPath}`;
+---
+
+<div
+	id="img-wrapper"
+	class="max-w-[20vh] overflow-hidden rounded-xl shadow-lg md:max-w-[300px]"
+>
+	<img src={url} alt={`Poster: ${alt}`} />
+</div>

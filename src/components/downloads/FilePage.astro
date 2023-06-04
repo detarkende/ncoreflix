@@ -1,0 +1,120 @@
+---
+import { extname } from 'path';
+import { getAllSubtitleFilesInDir } from '@/helpers/subtitles';
+import { isVideoExtension } from '@/helpers/utils/files';
+import {
+	getParentFolder,
+	getPathFromUrl,
+	getUrlFromPath,
+} from '@/helpers/utils/path/pathUtils';
+import { SUPPORTED_SUBTITLE_FORMAT } from '@/helpers/constants/constants';
+
+interface Props {
+	path: string;
+}
+const { path } = Astro.props;
+
+const extension = extname(path).replaceAll('.', '').toLowerCase();
+const isVideo = isVideoExtension(extension);
+
+const downloadPath = `/api/downloads/file/${path}`;
+
+const subtitles = await getAllSubtitleFilesInDir(
+	getPathFromUrl(getParentFolder(path)),
+);
+
+const subtitleUrls = subtitles.map((path) => getUrlFromPath(path));
+---
+
+<div
+	class="flex min-h-full w-full flex-col items-center justify-center space-y-5"
+>
+	{
+		isVideo && (
+			<video id="video-player" controls class="w-full max-w-5xl">
+				<source id="video-player-source" type="video/mp4" src="" />
+			</video>
+		)
+	}
+	<p id="video-playback-error" class="hidden text-center text-lg">
+		Unfortunately, we couldn't play the video you requested. <br />
+		<small class="max-w-sm font-mono text-red-500" id="error-source"
+		></small>
+	</p>
+	<a
+		href={downloadPath}
+		download
+		id="download-button"
+		class="rounded-full bg-blue-100 px-4 py-2 text-center text-xl font-bold text-blue-500"
+	>
+		Download content</a
+	>
+
+	<pre
+		id="subtitle-tracks"
+		class="hidden">
+    {JSON.stringify(subtitleUrls.map(url => `/api/subtitle${url}.${SUPPORTED_SUBTITLE_FORMAT}`))}
+  </pre>
+</div>
+
+<script>
+	const player = document.querySelector<HTMLMediaElement>('#video-player');
+	const playerSource = document.querySelector<HTMLMediaElement>(
+		'#video-player-source',
+	);
+	const subtitleUrls = document.querySelector('#subtitle-tracks');
+	const downloadBtn =
+		document.querySelector<HTMLAnchorElement>('#download-button');
+	const playbackError = document.querySelector('#video-playback-error');
+	const errorMessage = document.querySelector('#error-source');
+
+	if (!player || !playerSource || !downloadBtn || !subtitleUrls) {
+		console.error('no player');
+		throw Error('no player');
+	}
+	const subtitles = JSON.parse(subtitleUrls.innerHTML) as string[];
+
+	player?.addEventListener('error', (e) => {
+		player.classList.add('hidden');
+		playbackError && playbackError.classList.remove('hidden');
+		let message = '';
+		switch (player.error?.code) {
+			case 1:
+				message = 'Aborted';
+				break;
+			case 2:
+				message = 'Network error';
+				break;
+			case 3:
+				message =
+					'Decoding issue. Try a different browser, or downloading the file.';
+				break;
+			case 4:
+				message =
+					'Decoding issue. Try a different browser, or downloading the file.';
+				break;
+			default:
+				message = 'Unknown error';
+				break;
+		}
+		if (errorMessage) {
+			errorMessage.innerHTML = message;
+		} else {
+			alert(message);
+		}
+	});
+	playerSource.src = downloadBtn.href;
+	player.src = downloadBtn.href;
+	const tracks = subtitles.map((url, i) => ({
+		kind: 'captions',
+		label: `Track ${i}`,
+		src: url,
+	}));
+	tracks.forEach(({ kind, label, src }) => {
+		const track = document.createElement('track');
+		track.kind = kind;
+		track.label = label;
+		track.src = src;
+		player.appendChild(track);
+	});
+</script>

@@ -1,0 +1,27 @@
+name: "ncore-downloader"
+services:
+  web:
+    working_dir: "${DOCKER_WORKDIR}"
+    build:
+      context: .
+      args:
+        TRANSMISSION_USERNAME: kende
+        TRANSMISSION_PASSWORD: "shoo7Jed"
+        TRANSMISSION_DOWNLOAD_DIR: "${TRANSMISSION_DOWNLOAD_DIR}"
+        INTERNAL_TRANSMISSION_PORT: "${INTERNAL_TRANSMISSION_PORT}"
+        PORT: "${PORT}"
+        TRANSMISSION_PEER_PORT: "${TRANSMISSION_PEER_PORT}"
+        NODE_ENV: "${DOCKER_NODE_ENV}"
+        DOCKER_WORKDIR: "${DOCKER_WORKDIR}"
+    volumes:
+      # mount MEDIA folder
+      - "${TRANSMISSION_DOWNLOAD_DIR}:/media/share"
+      # mount local source into container
+      - "./:${DOCKER_WORKDIR}/"
+      - "/${DOCKER_WORKDIR}/node_modules"
+    ports:
+      - "${PORT}:${PORT}"
+      - "${INTERNAL_TRANSMISSION_PORT}:${INTERNAL_TRANSMISSION_PORT}"
+      - ${TRANSMISSION_PEER_PORT}:${TRANSMISSION_PEER_PORT}
+      - ${TRANSMISSION_PEER_PORT}:${TRANSMISSION_PEER_PORT}/udp
+    command: ${DOCKER_START_COMMAND}

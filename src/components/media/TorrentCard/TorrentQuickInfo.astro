@@ -1,0 +1,90 @@
+---
+import Badge from '@/components/shared/Badge/Badge.astro';
+
+import ResolutionIcon from 'astro-heroicons/outline/ArrowsPointingOut.astro';
+import CodecIcon from 'astro-heroicons/outline/Cog6Tooth.astro';
+import SizeIcon from 'astro-heroicons/outline/ArchiveBox.astro';
+import SeederIcon from 'astro-heroicons/outline/ArrowSmallUp.astro';
+
+export type Props = {
+	size: string;
+	seeders: string;
+	details: {
+		resolution?: string;
+		codec?: string;
+	};
+};
+
+const { size, seeders, details } = Astro.props;
+---
+
+<div
+	class="detail-tags hidden flex-wrap items-end space-y-2 md:flex lg:space-y-0"
+>
+	<Badge
+		text={size}
+		title="Size"
+		class="mr-2 inline-block max-h-[22px] whitespace-nowrap bg-amber-500"
+	>
+		<SizeIcon slot="icon" class="text-amber-600" />
+	</Badge>
+	<Badge
+		text={seeders}
+		title="Seeders"
+		class="mr-2 inline-block max-h-[22px] whitespace-nowrap bg-amber-500"
+	>
+		<SeederIcon slot="icon" class="text-amber-600" />
+	</Badge>
+	{
+		details.resolution && (
+			<Badge
+				title="Resolution"
+				text={details.resolution}
+				class="mr-2 inline-block max-h-[22px] whitespace-nowrap bg-amber-500"
+			>
+				<ResolutionIcon slot="icon" class="text-amber-600" />
+			</Badge>
+		)
+	}
+	{
+		details.codec && (
+			<Badge
+				title="Codec"
+				text={details.codec}
+				class="mr-2 inline-block max-h-[22px] whitespace-nowrap bg-amber-500"
+			>
+				<CodecIcon slot="icon" class="text-amber-600" />
+			</Badge>
+		)
+	}
+</div>
+<table
+	class="w-max md:hidden [&>tbody>tr>td:first-child]:pr-2 [&>tbody>tr>td:first-child]:font-medium"
+>
+	<tbody>
+		<tr>
+			<td>Size:</td>
+			<td>{size}</td>
+		</tr>
+		{
+			details.resolution && (
+				<tr>
+					<td>Resolution:</td>
+					<td>{details.resolution}</td>
+				</tr>
+			)
+		}
+		<tr>
+			<td>Seeders:</td>
+			<td>{seeders}</td>
+		</tr>
+		{
+			details.codec && (
+				<tr>
+					<td>Codec:</td>
+					<td>{details.codec}</td>
+				</tr>
+			)
+		}
+	</tbody>
+</table>

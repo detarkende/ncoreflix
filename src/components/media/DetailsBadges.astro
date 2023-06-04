@@ -1,0 +1,41 @@
+---
+import Badge from '@/components/shared/Badge/Badge.astro';
+import StarIcon from 'astro-heroicons/solid/Star.astro';
+import Calendar from 'astro-heroicons/solid/Calendar.astro';
+import FilmIcon from 'astro-heroicons/outline/Film.astro';
+import TvIcon from 'astro-heroicons/outline/Tv.astro';
+import type { Media } from '@/server/types/tmdb';
+
+export type Props = {
+	media: Media;
+};
+
+const { media } = Astro.props;
+
+const { release, rating, type } = media;
+---
+
+<div class="flex space-x-3">
+	{
+		!!rating && (
+			<Badge text={rating.toPrecision(2)} class="bg-amber-500 text-white">
+				<StarIcon class="text-amber-500" slot="icon" />
+			</Badge>
+		)
+	}
+	<Badge
+		text={type === 'movie' ? 'Movie' : 'TV show'}
+		class="bg-violet-400 text-white"
+	>
+		{
+			type === 'movie' ? (
+				<FilmIcon class="text-violet-300" slot="icon" />
+			) : (
+				<TvIcon class="text-violet-300" slot="icon" />
+			)
+		}
+	</Badge>
+	<Badge text={release} class="bg-blue-500 text-white">
+		<Calendar class="text-blue-400" slot="icon" />
+	</Badge>
+</div>

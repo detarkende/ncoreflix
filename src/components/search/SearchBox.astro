@@ -1,0 +1,25 @@
+---
+import MaginifyingGlassIcon from 'astro-heroicons/outline/MagnifyingGlass.astro';
+
+const query = Astro.url.searchParams.get('q') ?? '';
+---
+
+<div class="flex flex-col items-center space-y-3">
+	<label for="q" class="text-lg font-medium">
+		Search for a movie or TV show
+	</label>
+	<form action="/search" method="GET" class="flex justify-center space-x-2">
+		<input
+			class="focus:ring-3 block w-72 rounded-xl border-gray-300 px-3 focus:border-emerald-400 focus:ring-emerald-400 focus:ring-opacity-60 sm:text-sm"
+			type="search"
+			id="search"
+			name="q"
+			value={query}
+			autocomplete="off"
+			placeholder="Search for something..."
+		/>
+		<button class="rounded-xl bg-emerald-500 px-2">
+			<MaginifyingGlassIcon class="h-6 w-6 text-white" />
+		</button>
+	</form>
+</div>

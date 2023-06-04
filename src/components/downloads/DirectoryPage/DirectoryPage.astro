@@ -1,0 +1,58 @@
+---
+import { readdir } from 'fs/promises';
+import { lstatSync } from 'fs';
+import { join } from 'path';
+import {
+	getParentFolder,
+	getUrlFromPath,
+} from '@/helpers/utils/path/pathUtils';
+import ContentRow from './ContentRow.astro';
+
+interface Props {
+	path: string;
+}
+
+export type Content = {
+	path: string;
+	type: 'file' | 'directory';
+	name: string;
+	size: number;
+	createdAt: Date;
+};
+
+const { path } = Astro.props;
+
+const dirContents = await readdir(path).then((contents): Content[] => {
+	return contents.map((contentPath) => {
+		const stats = lstatSync(join(path, contentPath));
+		return {
+			path: getUrlFromPath(join(path, contentPath)),
+			href: `/downloads${getUrlFromPath(join(path, contentPath))}`,
+			name: contentPath,
+			type: stats.isFile() ? 'file' : 'directory',
+			size: stats.size,
+			createdAt: stats.birthtime,
+		};
+	});
+});
+---
+
+<table class="w-full">
+	<tbody>
+		{
+			path !== '/media/share' + '/' && (
+				<ContentRow
+					content={{
+						name: 'Parent directory',
+						type: 'directory',
+						createdAt: new Date(0),
+						path: getUrlFromPath(getParentFolder(path)),
+						size: 0,
+					}}
+					isParentDirectory
+				/>
+			)
+		}
+		{dirContents.map((content) => <ContentRow content={content} />)}
+	</tbody>
+</table>

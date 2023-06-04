@@ -1,0 +1,112 @@
+---
+import type { Torrent } from '@/server/types/ncore';
+import {
+	TorrentStatus,
+	TransmissionTorrent,
+} from '@/server/types/transmission';
+import DownloadIcon from 'astro-heroicons/solid/ArrowDownCircle.astro';
+import LoadingIcon from 'astro-heroicons/solid/Clock.astro';
+import DoneIcon from 'astro-heroicons/solid/CheckCircle.astro';
+
+export type Props = {
+	torrent: Torrent;
+	addedTorrents: TransmissionTorrent[];
+	url: string;
+};
+
+const { torrent, addedTorrents, url } = Astro.props;
+const CONFIRM_ADD_TORRENT = `Are you sure you want to add this torrent: ${torrent.name}?`;
+
+const addedTorrent = addedTorrents.find(
+	(addedTorrent) => addedTorrent.name === torrent.name,
+);
+
+const status = addedTorrent ? TorrentStatus[addedTorrent?.status] : null;
+
+const isDownloading =
+	status !== null &&
+	['DOWNLOAD', 'DOWNLOAD_WAIT', 'VERIFY', 'VERIFY_WAIT', 'STOPPED'].includes(
+		status,
+	);
+
+const isDownloaded = status !== null && ['SEED', 'SEED_WAIT'].includes(status);
+---
+
+{
+	status === null && (
+		<form
+			method="POST"
+			action="/api/torrent/add"
+			onsubmit={`return confirm('${CONFIRM_ADD_TORRENT}');`}
+		>
+			<input type="hidden" name="torrent" value={url} />
+			<button class="whitespace-nowrap rounded-md bg-green-500 p-1 font-semibold text-white">
+				Download
+				<DownloadIcon class="inline-block h-5 w-5 align-bottom" />
+			</button>
+		</form>
+	)
+}
+
+{
+	isDownloading && (
+		<a
+			href="/torrents"
+			class="loading-bg whitespace-nowrap rounded-md p-1 font-semibold text-white"
+		>
+			<span class="drop-shadow-sm">In progress</span>
+			<LoadingIcon class="inline-block h-5 w-5 align-bottom drop-shadow-sm" />
+		</a>
+	)
+}
+
+{
+	isDownloaded && (
+		<a
+			href="/torrents"
+			class="whitespace-nowrap rounded-md bg-green-500 p-1 font-semibold text-white"
+		>
+			See files
+			<DoneIcon class="inline-block h-5 w-5 align-bottom" />
+		</a>
+	)
+}
+
+<style>
+	@keyframes moving-bg {
+		0% {
+			background-position-x: 0;
+		}
+		100% {
+			background-position-x: 100%;
+		}
+	}
+	.loading-bg {
+		position: relative;
+		overflow: hidden;
+		background: transparent;
+	}
+	.loading-bg > * {
+		position: relative;
+		z-index: 2;
+	}
+	.loading-bg:before {
+		content: '';
+		z-index: 1;
+		position: absolute;
+		top: -50%;
+		left: -50%;
+		width: 250%;
+		height: 500%;
+		transform: rotate(45deg);
+		background-image: linear-gradient(
+			90deg,
+			#fbbf24 0%,
+			#fbbf24 50%,
+			#f59e0b 51%,
+			#f59e0b 100%
+		);
+		background-size: 12.5%;
+		animation: moving-bg 7s linear infinite;
+	}
+</style>

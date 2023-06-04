@@ -1,0 +1,23 @@
+---
+import Layout from '@/components/layout/Layout.astro';
+
+const { TRANSMISSION_USERNAME, TRANSMISSION_PASSWORD } = import.meta.env;
+
+const authString = `${TRANSMISSION_USERNAME}:${TRANSMISSION_PASSWORD}`;
+---
+
+<Layout title="Torrents">
+	<div class="h-full">
+		<iframe class="h-full w-full" data-auth-string={authString}></iframe>
+	</div>
+
+	<script>
+		const { hostname, protocol } = window.location;
+		const iframe = document.querySelector('iframe');
+		if (iframe && iframe.dataset.authString) {
+			iframe.src = `${protocol}//${
+				iframe.dataset.authString
+			}@${hostname}:${import.meta.env.PUBLIC_TRANSMISSION_PORT}`;
+		}
+	</script>
+</Layout>

@@ -1,0 +1,55 @@
+---
+import { nCore } from '@/server/services';
+import type { PaginationDetails, Torrent } from '@/server/types/ncore';
+import type { Media } from '@/server/types/tmdb';
+import TorrentCard from '@/components/media/TorrentCard/TorrentCard.astro';
+import { transmission } from '@/server/services';
+import Pagination from '@/components/shared/Pagination/Pagination.astro';
+
+export type Props = {
+	media: Media;
+};
+
+const query = new URL(Astro.url).searchParams;
+
+const page = query.get('page') ? Number(query.get('page')) : 1;
+
+const { media } = Astro.props;
+
+const { imdbId, type } = media;
+
+let torrents: Torrent[] = [];
+let pagination: PaginationDetails | null = null;
+
+if (imdbId) {
+	const results = await nCore.getTorrents({ imdbId, type, page });
+	torrents = results.torrents;
+	pagination = results.pagination;
+}
+
+const addedTorrents = await transmission.getTorrents();
+---
+
+<section class="flex-1 bg-slate-300 py-2 text-sm md:py-6 md:text-base">
+	<div class="container px-3 text-gray-800">
+		<h2 class="mb-6 text-3xl font-bold">Torrents</h2>
+		{!imdbId && <p class="text-center">IMDB ID not found</p>}
+		{pagination && <Pagination details={pagination} />}
+		{
+			imdbId && torrents.length === 0 && (
+				<p class="text-center">No torrents found</p>
+			)
+		}
+		<div class="flex flex-col space-y-2">
+			{
+				torrents.map((torrent) => (
+					<TorrentCard
+						torrent={torrent}
+						addedTorrents={addedTorrents}
+					/>
+				))
+			}
+		</div>
+		{pagination && <Pagination details={pagination} />}
+	</div>
+</section>

@@ -1,0 +1,20 @@
+---
+export type Props = {
+	name: string;
+	details: {
+		title?: string;
+		season?: number;
+		episode?: number;
+	};
+};
+
+const { name, details } = Astro.props;
+---
+
+<h3 class="font-bold">
+	{details.title ?? name}
+	<span class="inline-block pl-2 text-sm font-normal text-gray-500">
+		{details.season && <span>S{details.season}</span>}
+		{details.episode && <span>E{details.episode} </span>}
+	</span>
+</h3>

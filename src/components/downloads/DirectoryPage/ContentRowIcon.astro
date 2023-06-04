@@ -1,0 +1,27 @@
+---
+import ArrowUturnLeft from 'astro-heroicons/solid/ArrowUturnLeft.astro';
+import Folder from 'astro-heroicons/solid/Folder.astro';
+import Document from 'astro-heroicons/solid/Document.astro';
+
+interface Props {
+	type: 'file' | 'directory' | 'parent';
+}
+
+const { type } = Astro.props;
+---
+
+{
+	type === 'parent' && (
+		<ArrowUturnLeft class="mr-2 inline-block h-5 w-5 text-blue-500" />
+	)
+}
+{
+	type === 'directory' && (
+		<Folder class="mr-2 inline-block h-5 w-5 text-amber-500" />
+	)
+}
+{
+	type === 'file' && (
+		<Document class="mr-2 inline-block h-5 w-5 text-blue-500" />
+	)
+}

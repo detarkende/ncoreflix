@@ -1,0 +1,45 @@
+---
+import type { Torrent } from '@/server/types/ncore';
+import ptt from 'parse-torrent-title';
+import TorrentCategoryBadge from './TorrentCategoryBadge.astro';
+import TorrentActionButton from './TorrentActionButton.astro';
+import type { TransmissionTorrent } from '@/server/types/transmission';
+
+import TorrentTitle from './TorrentTitle.astro';
+import TorrentQuickInfo from './TorrentQuickInfo.astro';
+import TorrentFullDetails from './TorrentFullDetails.astro';
+
+export type Props = {
+	torrent: Torrent;
+	addedTorrents: TransmissionTorrent[];
+};
+
+const { torrent, addedTorrents } = Astro.props;
+const { name, url, size, seeders, category } = torrent;
+const details = ptt.parse(name);
+---
+
+<div
+	class="flex flex-col space-y-2 rounded-lg bg-slate-100 p-3 shadow-sm hover:bg-slate-50"
+>
+	<div class="flex items-start justify-between">
+		<div class="flex flex-col space-y-2">
+			<div class="flex">
+				<TorrentCategoryBadge category={category} />
+				<TorrentTitle name={name} details={details} />
+			</div>
+			<TorrentQuickInfo size={size} seeders={seeders} details={details} />
+		</div>
+
+		<TorrentActionButton
+			torrent={torrent}
+			addedTorrents={addedTorrents}
+			url={url}
+		/>
+	</div>
+	<div>
+		<TorrentFullDetails
+			data={[['Full name', name], ...Object.entries(details)]}
+		/>
+	</div>
+</div>

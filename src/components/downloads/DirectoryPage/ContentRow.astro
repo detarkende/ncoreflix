@@ -1,0 +1,79 @@
+---
+import Trash from 'astro-heroicons/solid/Trash.astro';
+import type { Content } from './DirectoryPage.astro';
+import {
+	bytesToString,
+	dateToString,
+} from '@/helpers/utils/formatters/formatter';
+import ContentRowIcon from './ContentRowIcon.astro';
+
+interface Props {
+	content: Content;
+	isParentDirectory?: boolean;
+}
+
+const { content, isParentDirectory = false } = Astro.props;
+const { name, path, size, createdAt, type } = content;
+---
+
+<tr class="w-full font-mono text-gray-400 hover:bg-blue-100">
+	<td data-role="content-name" class="text-left text-gray-800">
+		<a href={`/downloads${path}`}>
+			<ContentRowIcon type={isParentDirectory ? 'parent' : type} />
+			{name}
+		</a>
+	</td>
+
+	<td data-role="content-size">
+		{!isParentDirectory && bytesToString(size)}
+	</td>
+	<td data-role="content-date">
+		{!isParentDirectory && dateToString(createdAt)}
+	</td>
+	<td data-role="delete">
+		{
+			!isParentDirectory && (
+				<form
+					action="/api/downloads/delete"
+					method="post"
+					onsubmit={`return confirm('Are you sure you want to delete ${path}?')`}
+				>
+					<input type="hidden" name="file" value={path} />
+					<button class="rounded-full bg-red-100 px-2 py-1 text-sm text-red-500">
+						<Trash class="inline-block h-5 w-5" />
+						Delete
+					</button>
+				</form>
+			)
+		}
+	</td>
+</tr>
+
+<style scoped lang="scss">
+	tr {
+		td {
+			padding: 0.25rem 1rem 0.25rem 0;
+			white-space: nowrap;
+		}
+
+		td[data-role='content-name'] {
+			width: 100%;
+		}
+	}
+
+	@media (max-width: 768px) {
+		tr {
+			overflow-x: scroll;
+
+			td[data-role='content-name'] {
+				max-width: 50%;
+				overflow-x: scroll;
+			}
+			td {
+				margin: 0;
+				padding-right: 2rem;
+				white-space: nowrap;
+			}
+		}
+	}
+</style>

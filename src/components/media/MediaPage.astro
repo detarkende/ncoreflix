@@ -1,0 +1,44 @@
+---
+import type { Media } from '@/server/types/tmdb';
+import Layout from '../layout/Layout.astro';
+
+import Poster from './Poster.astro';
+import Details from './Details.astro';
+import TorrentSection from './TorrentSection.astro';
+
+export interface Props {
+	media: Media;
+}
+
+const { media } = Astro.props;
+
+const { title, poster, backdrop } = media;
+---
+
+<Layout title={title}>
+	<section
+		style={`--backdrop-path: url('https://image.tmdb.org/t/p/w1920_and_h800_multi_faces${backdrop}')`}
+		id="main"
+		class="w-full overflow-hidden py-8 text-white lg:py-12"
+	>
+		<div
+			class="container flex flex-col items-center space-y-3 md:flex-row md:items-end md:space-x-10 md:space-y-0 md:px-3"
+		>
+			<Poster posterPath={poster} alt={title} />
+			<Details media={media} />
+		</div>
+	</section>
+	<TorrentSection media={media} />
+	<style lang="scss">
+		section#main {
+			background-image: linear-gradient(
+					rgba(4, 31, 64, 0.6),
+					rgba(4, 31, 64, 0.6)
+				),
+				var(--backdrop-path);
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+		}
+	</style>
+</Layout>

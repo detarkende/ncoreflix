@@ -1,0 +1,34 @@
+---
+import type { Torrent } from '@/server/types/ncore';
+import Badge from '@/components/shared/Badge/Badge.astro';
+
+export type Props = {
+	category: Torrent['category'];
+};
+
+const { category } = Astro.props;
+---
+
+{
+	category.split('/')[0] === 'SD' ? (
+		<Badge
+			textIcon
+			class="mr-1 max-h-[20px] bg-amber-500 text-xs"
+			text={category.split('/')[1]}
+		>
+			<span slot="icon" class="text-amber-500">
+				{category.split('/')[0]}
+			</span>
+		</Badge>
+	) : (
+		<Badge
+			textIcon
+			class="mr-1 max-h-[20px] bg-emerald-500 text-xs"
+			text={category.split('/')[1]}
+		>
+			<span slot="icon" class="text-emerald-600">
+				{category.split('/')[0]}
+			</span>
+		</Badge>
+	)
+}

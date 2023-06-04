@@ -1,0 +1,56 @@
+---
+import type { PaginationDetails } from '@/server/types/ncore';
+import PaginationLink from './PaginationLink.astro';
+import ChevronLeft from 'astro-heroicons/solid/ChevronDoubleLeft.astro';
+import ChevronRight from 'astro-heroicons/solid/ChevronDoubleRight.astro';
+
+export type Props = {
+	details: PaginationDetails;
+};
+
+// The number of pages to show on either side of the current page
+const OFFSET = 2;
+
+const { details } = Astro.props;
+const { currentPage, totalPages } = details;
+
+let pages = [];
+
+for (let i = currentPage - OFFSET; i <= currentPage + OFFSET; i++) {
+	if (i >= 1 && i <= totalPages) {
+		pages.push(i);
+	}
+}
+---
+
+<nav class="py-3">
+	<ul class="flex justify-center space-x-2">
+		<PaginationLink pageNumber={1}>
+			<ChevronLeft class="inline-block h-3 w-3 align-baseline" /> First
+		</PaginationLink>
+		{
+			currentPage - OFFSET > 1 && (
+				<li class="">
+					<span class="sm:px-2">...</span>
+				</li>
+			)
+		}
+		{
+			pages.map((i) => (
+				<PaginationLink pageNumber={i} active={i === currentPage}>
+					{i}
+				</PaginationLink>
+			))
+		}
+		{
+			currentPage + OFFSET < totalPages && (
+				<li class="">
+					<span class="sm:px-2">...</span>
+				</li>
+			)
+		}
+		<PaginationLink pageNumber={totalPages}>
+			Last <ChevronRight class="inline-block h-3 w-3 align-baseline" />
+		</PaginationLink>
+	</ul>
+</nav>

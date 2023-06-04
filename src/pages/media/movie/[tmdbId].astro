@@ -1,0 +1,30 @@
+---
+import MediaPage from '@/components/media/MediaPage.astro';
+import { getReleaseYear } from '@/helpers/utils/formatters/formatter';
+import { TMDB } from '@/server/services/tmdb';
+import type { Media } from '@/server/types/tmdb';
+
+const { tmdbId: tmdb_id } = Astro.params;
+
+const { data } = await TMDB.get('/3/movie/{movie_id}', {
+	params: {
+		path: {
+			movie_id: Number(tmdb_id),
+		},
+	},
+});
+
+const media: Media = {
+	title: data?.title ?? 'Title not found',
+	description: data?.overview ?? 'Description not found',
+	release: getReleaseYear(data?.release_date),
+	rating: data?.vote_average ?? null,
+	poster: data?.poster_path ?? null,
+	backdrop: data?.backdrop_path ?? null,
+	genres: data?.genres?.flatMap(({ name }) => (name ? [name] : [])) ?? [],
+	type: 'movie',
+	imdbId: data?.imdb_id ?? null,
+};
+---
+
+<MediaPage media={media} />
