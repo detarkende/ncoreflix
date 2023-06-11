@@ -1,0 +1,17 @@
+---
+import { toastMessageArraySchema } from '@/server/toast-messages/types';
+import Message from './messages/Message.astro';
+const messagesJson = Astro.cookies.get('toast-messages').value;
+const messagesData = messagesJson ? JSON.parse(messagesJson) : [];
+
+const validation = toastMessageArraySchema.safeParse(messagesData);
+const messages = validation.success ? validation.data : [];
+---
+
+<div class="absolute bottom-0 right-0 flex max-w-screen-sm flex-col px-2 pb-16">
+	{messages.map((message, i) => <Message message={message} index={i} />)}
+</div>
+
+<script>
+	document.cookie = 'toast-messages=[]';
+</script>

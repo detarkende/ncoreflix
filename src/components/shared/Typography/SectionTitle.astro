@@ -1,0 +1,9 @@
+---
+export type Props = {
+	class?: string;
+};
+
+const { class: classNames = '' } = Astro.props;
+---
+
+<h2 class={'text-xl font-bold' + ` ${classNames}`}><slot /></h2>

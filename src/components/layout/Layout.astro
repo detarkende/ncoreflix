@@ -1,19 +1,15 @@
 ---
-import { getUser } from '@astro-auth/core';
 import Navbar from '@/components/layout/Navbar.astro';
-import Login from '@/components/auth/Login.astro';
 import PWATags from '@/components/pwa/PWATags.astro';
 import PWAScript from '@/components/pwa/PWAScript.astro';
 import Footer from '@/components/layout/Footer.astro';
+import ToastMessages from '@/components/toast/ToastMessages.astro';
 
 export interface Props {
 	title: string;
 }
 
 const { title } = Astro.props;
-
-const user = getUser({ client: Astro });
-const isLoggedIn = !!user;
 ---
 
 <!DOCTYPE html>
@@ -29,19 +25,12 @@ const isLoggedIn = !!user;
 	<body
 		class="flex h-full flex-col items-stretch overflow-x-hidden text-gray-700"
 	>
-		{
-			isLoggedIn ? (
-				<>
-					<Navbar />
-					<main class="flex flex-1 flex-col bg-gray-50">
-						<slot />
-					</main>
-					<PWAScript />
-					<Footer />
-				</>
-			) : (
-				<Login />
-			)
-		}
+		<Navbar />
+		<main class="flex flex-1 flex-col bg-gray-50">
+			<slot />
+		</main>
+		<PWAScript />
+		<Footer />
+		<ToastMessages />
 	</body>
 </html>

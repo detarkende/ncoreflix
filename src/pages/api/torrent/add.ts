@@ -15,7 +15,11 @@ export const post: APIRoute = async ({ request, redirect }) => {
 	}
 	const downloadUrl = await nCore.getTorrentDownloadLink({ url });
 
-	await transmission.addTorrent({ url: downloadUrl });
+	const torrent = await transmission.addTorrent({
+		url: downloadUrl,
+		paused: true,
+	});
+	console.log(torrent);
 
 	return redirect('/torrents', 301);
 };

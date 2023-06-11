@@ -1,0 +1,22 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+export interface Props extends HTMLAttributes<'button'> {
+	label?: string;
+	type: Exclude<
+		astroHTML.JSX.IntrinsicElements['button']['type'],
+		null | undefined
+	>;
+	class?: astroHTML.JSX.IntrinsicElements['button']['class'];
+}
+
+const { label, class: classNames, ...props } = Astro.props;
+---
+
+<button
+	{...props}
+	class={'rounded-xl bg-emerald-500 px-4 py-2 text-white hover:bg-emerald-600' +
+		` ${classNames}` ?? ''}
+>
+	<slot />
+</button>

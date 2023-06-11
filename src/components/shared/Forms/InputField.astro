@@ -1,0 +1,34 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+export interface Props extends HTMLAttributes<'input'> {
+	label?: string;
+	class?: astroHTML.JSX.IntrinsicElements['input']['class'];
+	type?: astroHTML.JSX.IntrinsicElements['input']['type'];
+}
+
+const { label, class: classNames, ...props } = Astro.props;
+---
+
+{
+	label ? (
+		<label>
+			{label}
+			<input
+				{...props}
+				class={
+					'focus:ring-3 block w-72 rounded-xl border-gray-300 px-3 invalid:border-red-400 invalid:ring-red-400 focus:border-emerald-400 focus:ring-emerald-400 focus:ring-opacity-60 sm:text-sm' +
+						` ${classNames}` ?? ''
+				}
+			/>
+		</label>
+	) : (
+		<input
+			{...props}
+			class={
+				'focus:ring-3 block w-72 rounded-xl border-gray-300 px-3 invalid:border-red-400 invalid:ring-red-400 focus:border-emerald-400 focus:ring-emerald-400 focus:ring-opacity-60 sm:text-sm' +
+					` ${classNames}` ?? ''
+			}
+		/>
+	)
+}

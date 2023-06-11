@@ -1,49 +1,27 @@
 ---
+import Button from '../shared/Forms/Button.astro';
+import InputField from '../shared/Forms/InputField.astro';
 ---
 
 <div class="flex h-full items-center justify-center bg-gray-50">
 	<form
 		id="login-form"
-		onsubmit="(e) => onSubmit(e)"
+		method="post"
+		action="/api/auth/login"
 		class="flex flex-col justify-center space-y-3"
 	>
-		<input
-			placeholder="Password"
+		<InputField
+			label="Username"
+			autocomplete="username"
+			type="text"
+			name="username"
+		/>
+		<InputField
+			label="Password"
+			autocomplete="password"
 			type="password"
 			name="password"
-			class="rounded-md px-2 py-1 ring-1 ring-blue-300"
 		/>
-
-		<button>Log in</button>
-
-		<span id="error"></span>
+		<Button type="submit">Log in</Button>
 	</form>
-
-	<script>
-		import { signIn } from '@astro-auth/client';
-
-		const form = document.querySelector('form#login-form');
-		const error = document.querySelector('#error');
-
-		async function onSubmit(e: Event) {
-			e.preventDefault();
-			const passwordInput = form?.querySelector<HTMLInputElement>(
-				'input[name="password"]',
-			);
-
-			const resp = await signIn({
-				provider: 'credential',
-				login: {
-					password: passwordInput?.value,
-				},
-			});
-			if ('error' in resp && error) {
-				error.innerHTML = resp.error
-					? JSON.stringify(resp.error)
-					: 'Wrong password';
-			}
-		}
-
-		form?.addEventListener('submit', onSubmit);
-	</script>
 </div>

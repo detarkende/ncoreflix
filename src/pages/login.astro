@@ -1,0 +1,18 @@
+---
+import ToastMessages from '@/components/toast/ToastMessages.astro';
+import LoginPage from '@/components/auth/Login.astro';
+---
+
+<html class="h-full w-full overflow-x-hidden">
+	<head>
+		<title>Login</title>
+	</head>
+	<body
+		class="flex h-full flex-col items-stretch overflow-x-hidden text-gray-700"
+	>
+		<main class="flex flex-1 flex-col bg-gray-50">
+			<LoginPage />
+		</main>
+		<ToastMessages />
+	</body>
+</html>

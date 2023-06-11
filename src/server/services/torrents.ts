@@ -61,7 +61,7 @@ export class Transmission {
 			return;
 		}
 		console.log(`⚡️ — Torrent added: ${url}\n`);
-		return;
+		return response.json();
 	}
 
 	/**
