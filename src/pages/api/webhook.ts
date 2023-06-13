@@ -3,6 +3,7 @@ import { glob } from 'glob';
 import { spawn } from 'child_process';
 import { setTimeout } from 'timers/promises';
 import { notifyAll } from '@/helpers/web-push';
+import { env } from '@/environment/server';
 
 export const get: APIRoute = async ({ url }) => {
 	const path = url.searchParams.get('path'); // await request.json();
@@ -14,7 +15,7 @@ export const get: APIRoute = async ({ url }) => {
 
 	notifyAll({
 		title: 'New torrent downloaded!',
-		body: path?.replace('/media/share', '') ?? '',
+		body: path?.replace(env.TRANSMISSION_DOWNLOAD_DIR, '') ?? '',
 	});
 
 	try {

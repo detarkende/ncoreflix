@@ -4,9 +4,10 @@ import { join } from 'node:path';
 import { lstatSync } from 'node:fs';
 import FilePage from '@/components/downloads/FilePage.astro';
 import DirectoryPage from '@/components/downloads/DirectoryPage/DirectoryPage.astro';
+import { env } from '@/environment/server';
 
 const { path = '/' } = Astro.params;
-const reqPath = join('/media/share', path);
+const reqPath = join(env.TRANSMISSION_DOWNLOAD_DIR, path);
 const pathStats = lstatSync(reqPath);
 
 const isFile = pathStats.isFile();

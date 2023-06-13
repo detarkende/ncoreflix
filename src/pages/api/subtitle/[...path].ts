@@ -1,14 +1,10 @@
 import type { APIRoute } from 'astro';
 import { convertSubtitle } from '../../../helpers/subtitles';
 import { SUPPORTED_SUBTITLE_FORMAT } from '../../../helpers/constants/constants';
-import { isAuthenticated } from '@/helpers/utils/auth/auth';
+import { env } from '@/environment/server';
 
 export const get: APIRoute = async ({ request, params }) => {
-	if (!isAuthenticated(request)) {
-		return new Response('Unauthorized', { status: 401 });
-	}
-
-	const filePath = `/media/share/${params.path?.replace(
+	const filePath = `${env.TRANSMISSION_DOWNLOAD_DIR}/${params.path?.replace(
 		/\.srt\.vtt$/,
 		'.srt',
 	)}`;

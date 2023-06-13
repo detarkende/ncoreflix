@@ -1,4 +1,3 @@
-import { isAuthenticated } from '@/helpers/utils/auth/auth';
 import {
 	getParentFolder,
 	getPathFromUrl,
@@ -7,10 +6,6 @@ import type { APIRoute } from 'astro';
 import { rm } from 'fs/promises';
 
 export const post: APIRoute = async ({ request, url }) => {
-	if (!isAuthenticated(request)) {
-		return new Response('Unauthorized', { status: 401 });
-	}
-
 	try {
 		const data = await request.formData();
 		const file = data.get('file');

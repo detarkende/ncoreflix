@@ -7,17 +7,34 @@ const authString = `${TRANSMISSION_USERNAME}:${TRANSMISSION_PASSWORD}`;
 ---
 
 <Layout title="Torrents">
-	<div class="h-full">
+	<div class="h-full" id="iframe-container">
 		<iframe class="h-full w-full" data-auth-string={authString}></iframe>
 	</div>
 
 	<script>
-		const { hostname, protocol } = window.location;
-		const iframe = document.querySelector('iframe');
-		if (iframe && iframe.dataset.authString) {
-			iframe.src = `${protocol}//${
-				iframe.dataset.authString
-			}@${hostname}:${import.meta.env.PUBLIC_TRANSMISSION_PORT}`;
+		async function main() {
+			const { hostname, protocol } = window.location;
+			const port = import.meta.env.PUBLIC_TRANSMISSION_PORT;
+			const iframe = document.querySelector('iframe');
+			const iframeContainer = document.querySelector(
+				'div#iframe-container',
+			);
+			const { authString } = iframe.dataset;
+
+			const url = `${protocol}//${hostname}:${port}`;
+			const authUrl = `${protocol}//${authString}@${hostname}:${port}`;
+
+			if (iframe) {
+				iframe.src = authUrl;
+				setTimeout(() => {
+					iframe.remove();
+					const newIframe = document.createElement('iframe');
+					newIframe.classList = iframe.classList;
+					newIframe.src = url;
+					iframeContainer.appendChild(newIframe);
+				}, 100);
+			}
 		}
+		main();
 	</script>
 </Layout>

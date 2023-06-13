@@ -3,10 +3,8 @@
 	"type": "module",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "transmission-daemon && astro dev --host",
-		"start": "transmission-daemon && astro build && HOST=0.0.0.0 PORT=3000 node dist/server/entry.mjs",
-		"docker:dev": "docker compose --env-file .env up",
-		"docker:prod": "docker compose --env-file .env.prod up -d",
+		"dev": "docker compose up & astro dev --host",
+		"start": "docker compose up & astro build && HOST=0.0.0.0 PORT=3000 node dist/server/entry.mjs",
 		"astro": "astro",
 		"test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --watch",
 		"lint": "eslint --ext .ts,.astro ./src",
@@ -17,12 +15,8 @@
 		"ci:lint": "eslint --ext .ts,.astro ./src"
 	},
 	"dependencies": {
-		"@astro-auth/client": "^1.0.5",
-		"@astro-auth/core": "^1.0.12",
-		"@astro-auth/providers": "^1.0.6",
 		"@astrojs/node": "^5.1.1",
 		"@astrojs/tailwind": "^3.1.1",
-		"@formkit/auto-animate": "^1.0.0-beta.6",
 		"@prisma/client": "^4.15.0",
 		"@tailwindcss/forms": "^0.5.3",
 		"@tailwindcss/line-clamp": "^0.4.4",
@@ -43,8 +37,7 @@
 		"subtitle": "^4.2.1",
 		"tailwindcss": "^3.3.1",
 		"web-push": "^3.5.0",
-		"zod": "^3.21.4",
-		"zx": "^7.2.1"
+		"zod": "^3.21.4"
 	},
 	"devDependencies": {
 		"@jest/globals": "^29.5.0",

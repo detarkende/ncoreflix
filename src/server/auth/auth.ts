@@ -35,7 +35,7 @@ export const generateSessionId = async (length = 20): Promise<string> => {
 export const generateCookieString = (sessionId: string, maxAge: number) => {
 	const cookieString = cookie.serialize('sessionId', sessionId, {
 		httpOnly: true,
-		secure: env.DOCKER_NODE_ENV === 'production',
+		secure: env.NODE_ENV === 'production',
 		path: '/',
 		sameSite: 'lax',
 		maxAge,

@@ -10,7 +10,7 @@ export const nCore = new Ncore({
 
 export const transmission = new Transmission({
 	port: env.INTERNAL_TRANSMISSION_PORT,
-	downloadDir: '/media/shared',
+	downloadDir: env.TRANSMISSION_DOWNLOAD_DIR,
 	username: env.TRANSMISSION_USERNAME,
 	password: env.TRANSMISSION_PASSWORD,
 });

@@ -7,6 +7,7 @@ import {
 	getUrlFromPath,
 } from '@/helpers/utils/path/pathUtils';
 import ContentRow from './ContentRow.astro';
+import { env } from '@/environment/server';
 
 interface Props {
 	path: string;
@@ -40,7 +41,7 @@ const dirContents = await readdir(path).then((contents): Content[] => {
 <table class="w-full">
 	<tbody>
 		{
-			path !== '/media/share' + '/' && (
+			path !== env.TRANSMISSION_DOWNLOAD_DIR + '/' && (
 				<ContentRow
 					content={{
 						name: 'Parent directory',

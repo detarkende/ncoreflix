@@ -1,7 +1,6 @@
 import type { APIRoute } from 'astro';
 import db from '@/db';
 import { sendNotification } from '@/helpers/web-push';
-import { isAuthenticated } from '@/helpers/utils/auth/auth';
 
 const isString = (str: string): str is string => {
 	return !!str && typeof str === 'string';
@@ -27,9 +26,6 @@ const isSubscription = (obj: {
 };
 
 export const post: APIRoute = async ({ request }) => {
-	if (!isAuthenticated(request)) {
-		return new Response('Unauthorized', { status: 401 });
-	}
 	try {
 		const data = await request.json();
 		console.log(`👤 - New request for new subscriber`);
