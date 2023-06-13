@@ -18,7 +18,7 @@ export class Transmission {
 		username: string;
 		password: string;
 	}) {
-		this.url = `http://localhost:${port}/transmission-client/transmission/rpc`;
+		this.url = `http://localhost:${port}/transmission/rpc`;
 		this.downloadDir = downloadDir;
 		this.sessionId = '';
 		this.authString = btoa(`${username}:${password}`);
