@@ -1,11 +1,10 @@
-import { load } from 'cheerio';
+import { Transmission as TransmissionApi } from '@ctrl/transmission';
 import type { TransmissionTorrent } from '../types/transmission';
+import { prisma } from '../db/client';
 
 export class Transmission {
-	private url = '';
-	private sessionId = '';
+	private api: TransmissionApi;
 	private downloadDir = '';
-	private authString = '';
 
 	constructor({
 		port,
@@ -18,109 +17,49 @@ export class Transmission {
 		username: string;
 		password: string;
 	}) {
-		this.url = `http://localhost:${port}/transmission/rpc`;
+		this.api = new TransmissionApi({
+			baseUrl: `http://localhost:${port}`,
+			username,
+			password,
+		});
 		this.downloadDir = downloadDir;
-		this.sessionId = '';
-		this.authString = btoa(`${username}:${password}`);
-		void this.setSessionId();
 	}
 
-	/**
-	 * Adds a torrent to the transmission client
-	 */
 	public async addTorrent({
 		url,
 		paused = false,
+		path = '',
+		userId,
 	}: {
 		url: string;
+		userId: number;
 		paused?: boolean;
-	}): Promise<void> {
+		path?: string;
+	}) {
 		console.log(`⚡️ — Adding torrent: ${url}`);
-
-		const response = await fetch(this.url, {
-			method: 'POST',
-			body: JSON.stringify({
-				method: 'torrent-add',
-				arguments: {
-					paused,
-					downloadDir: this.downloadDir,
-					filename: url,
-				},
-			}),
-			headers: {
-				'Content-Type': 'application/json',
-				'x-transmission-session-id': this.sessionId,
-				Authorization: `Basic ${this.authString}`,
-			},
-		});
-
-		if (response.status === 409) {
-			console.warn(`⚡️ — Session expired, renewing...`);
-			await this.setSessionId();
-			await this.addTorrent({ url, paused });
-			return;
-		}
-		console.log(`⚡️ — Torrent added: ${url}\n`);
-		return response.json();
-	}
-
-	/**
-	 * Gets the list of added torrents
-	 */
-	public async getTorrents(): Promise<TransmissionTorrent[]> {
-		await this.setSessionId();
-		const response = await fetch(this.url, {
-			method: 'POST',
-			body: JSON.stringify({
-				method: 'torrent-get',
-				arguments: {
-					fields: [
-						'id',
-						'name',
-						'status',
-						'isFinished',
-						'isStalled',
-						'percentDone',
-						'percentComplete',
-					],
-				},
-			}),
-			headers: {
-				'Content-Type': 'application/json',
-				'x-transmission-session-id': this.sessionId,
-				Authorization: `Basic ${this.authString}`,
-			},
-		});
+		const downloadDir = `${this.downloadDir}/${path}`;
 		const {
-			arguments: { torrents },
-		} = await response.json();
-		return torrents as TransmissionTorrent[];
+			arguments: {
+				'torrent-added': { hashString, id, name },
+			},
+		} = await this.api.addUrl(url, {
+			paused,
+			'download-dir': downloadDir,
+		});
+		await prisma.torrent.create({
+			data: {
+				hashString,
+				transmissionId: id,
+				name,
+				path: downloadDir,
+				userId,
+			},
+		});
+		console.log(`⚡️ — Torrent added: ${url}\n`);
 	}
 
-	private async setSessionId() {
-		try {
-			const response = await fetch(this.url, {
-				method: 'POST',
-				body: JSON.stringify({
-					method: 'session-get',
-				}),
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Basic ${this.authString}`,
-				},
-			});
-			if (response.status === 409) {
-				const sessionId =
-					response.headers.get('x-transmission-session-id') ?? '';
-				this.sessionId = sessionId;
-			}
-		} catch (e) {
-			console.error(e);
-		}
-	}
-
-	public async getSessionId(): Promise<string> {
-		await this.setSessionId();
-		return this.sessionId;
+	public async getTorrents(): Promise<TransmissionTorrent[]> {
+		const { torrents } = await this.api.getAllData();
+		return torrents;
 	}
 }

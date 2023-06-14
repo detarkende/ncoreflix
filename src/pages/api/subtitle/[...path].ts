@@ -3,7 +3,7 @@ import { convertSubtitle } from '../../../helpers/subtitles';
 import { SUPPORTED_SUBTITLE_FORMAT } from '../../../helpers/constants/constants';
 import { env } from '@/environment/server';
 
-export const get: APIRoute = async ({ request, params }) => {
+export const get: APIRoute = async ({ params }) => {
 	const filePath = `${env.TRANSMISSION_DOWNLOAD_DIR}/${params.path?.replace(
 		/\.srt\.vtt$/,
 		'.srt',

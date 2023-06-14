@@ -1,19 +1,30 @@
-export type TransmissionTorrent = {
-	id: number;
-	status: keyof typeof TorrentStatus;
-	name: string;
-	isFinished: boolean;
-	isStalled: boolean;
-	percentDone: number;
-	percentComplete: number;
+import type { Transmission as TransmissionApi } from '@ctrl/transmission';
+
+export type TransmissionTorrent = Awaited<
+	ReturnType<TransmissionApi['getAllData']>
+>['torrents'][number];
+
+export enum TorrentState {
+	downloading = 'downloading',
+	seeding = 'seeding',
+	paused = 'paused',
+	queued = 'queued',
+	checking = 'checking',
+	warning = 'warning',
+	error = 'error',
+	unknown = 'unknown',
+}
+
+export const isDownloadingState = (state: TorrentState): boolean => {
+	return [
+		TorrentState.checking,
+		TorrentState.downloading,
+		TorrentState.queued,
+		TorrentState.paused,
+		TorrentState.unknown,
+	].includes(state);
 };
 
-export const TorrentStatus = {
-	0: 'STOPPED',
-	1: 'VERIFY_WAIT',
-	2: 'VERIFY',
-	3: 'DOWNLOAD_WAIT',
-	4: 'DOWNLOAD',
-	5: 'SEED_WAIT',
-	6: 'SEED',
-} as const;
+export const isDownloadDoneState = (state: TorrentState): boolean => {
+	return state === TorrentState.seeding;
+};

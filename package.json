@@ -17,6 +17,7 @@
 	"dependencies": {
 		"@astrojs/node": "^5.1.1",
 		"@astrojs/tailwind": "^3.1.1",
+		"@ctrl/transmission": "^4.3.0",
 		"@prisma/client": "^4.15.0",
 		"@tailwindcss/forms": "^0.5.3",
 		"@tailwindcss/line-clamp": "^0.4.4",

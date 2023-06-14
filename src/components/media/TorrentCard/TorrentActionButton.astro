@@ -1,8 +1,9 @@
 ---
 import type { Torrent } from '@/server/types/ncore';
 import {
-	TorrentStatus,
 	TransmissionTorrent,
+	isDownloadingState,
+	isDownloadDoneState,
 } from '@/server/types/transmission';
 import DownloadIcon from 'astro-heroicons/solid/ArrowDownCircle.astro';
 import LoadingIcon from 'astro-heroicons/solid/Clock.astro';
@@ -21,15 +22,11 @@ const addedTorrent = addedTorrents.find(
 	(addedTorrent) => addedTorrent.name === torrent.name,
 );
 
-const status = addedTorrent ? TorrentStatus[addedTorrent?.status] : null;
+const status = addedTorrent ? addedTorrent.state : null;
 
-const isDownloading =
-	status !== null &&
-	['DOWNLOAD', 'DOWNLOAD_WAIT', 'VERIFY', 'VERIFY_WAIT', 'STOPPED'].includes(
-		status,
-	);
+const isDownloading = status !== null && isDownloadingState(status);
 
-const isDownloaded = status !== null && ['SEED', 'SEED_WAIT'].includes(status);
+const isDownloaded = status !== null && isDownloadDoneState(status);
 ---
 
 {
@@ -40,6 +37,7 @@ const isDownloaded = status !== null && ['SEED', 'SEED_WAIT'].includes(status);
 			onsubmit={`return confirm('${CONFIRM_ADD_TORRENT}');`}
 		>
 			<input type="hidden" name="torrent" value={url} />
+			<input type="hidden" name="torrent-name" value={torrent.name} />
 			<button class="whitespace-nowrap rounded-md bg-green-500 p-1 font-semibold text-white">
 				Download
 				<DownloadIcon class="inline-block h-5 w-5 align-bottom" />
