@@ -33,9 +33,8 @@
 			headers: new Headers({ 'Content-Type': 'application/json' }),
 			body: JSON.stringify(subscription),
 		});
-
 		const data = await resp.json();
-		console.log('Subscription response: ', data);
+
 		updateButtonText();
 	};
 

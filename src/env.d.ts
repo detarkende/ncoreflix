@@ -8,7 +8,7 @@ type ImportMetaEnv = typeof env;
 declare global {
 	namespace App {
 		interface Locals {
-			user: User | null;
+			user: User;
 		}
 	}
 }
