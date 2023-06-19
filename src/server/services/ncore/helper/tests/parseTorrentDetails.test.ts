@@ -1,6 +1,6 @@
 import { parseTorrentDetails } from '../parseTorrentDetails';
 import fs from 'fs';
-import { torrentArraySchema } from '@/server/types/ncore';
+import { torrentArraySchema } from '../../types';
 
 describe('parseTorrentDetails', () => {
 	describe('No torrents found', () => {
