@@ -1,9 +1,5 @@
 import { load } from 'cheerio';
-import {
-	isTorrentCategory,
-	type PaginationDetails,
-	type Torrent,
-} from '@/server/types/ncore';
+import { PaginationDetails, Torrent, isTorrentCategory } from '../types';
 
 export const parseTorrentDetails = ({
 	html,
