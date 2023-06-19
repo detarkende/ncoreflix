@@ -10,6 +10,8 @@
 </footer>
 
 <script>
+	import { toastMessageStore } from '../toast/toastMessageStore';
+
 	const button =
 		document.querySelector<HTMLButtonElement>('#get-notifications');
 	if (!button) {
@@ -34,7 +36,8 @@
 			body: JSON.stringify(subscription),
 		});
 		const data = await resp.json();
-
+		const { add: addToastMessage } = toastMessageStore.getState();
+		addToastMessage(data);
 		updateButtonText();
 	};
 

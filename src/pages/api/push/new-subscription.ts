@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { subscribeToNotifications } from '@/server/services/push';
 
-export const post: APIRoute = async ({ request, redirect, locals }) => {
+export const post: APIRoute = async ({ request, locals }) => {
 	const data = await request.json();
 	const toastMessage = await subscribeToNotifications(data, locals.user);
 

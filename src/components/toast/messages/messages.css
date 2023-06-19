@@ -1,0 +1,53 @@
+@keyframes hideToast {
+	0% {
+		opacity: 1;
+		max-height: 80px;
+		margin-bottom: 12px;
+		transform: translateX(0);
+	}
+	99% {
+		opacity: 0;
+		max-height: 80px;
+		margin-bottom: 12px;
+		transform: translateX(200%);
+	}
+	100% {
+		opacity: 0;
+		max-height: 0px;
+		margin-bottom: 0px;
+		transform: translateX(200%);
+	}
+}
+
+.toast-message {
+	@apply mb-3 max-h-20 w-full rounded-lg px-3 py-2 font-light text-white line-clamp-3 hover:line-clamp-none;
+	@apply backdrop-blur-sm transition;
+	@apply flex items-center justify-between hover:flex;
+
+	animation-name: hideToast;
+	animation-fill-mode: forwards;
+	animation-duration: 300ms;
+	animation-timing-function: ease-in;
+	animation-delay: var(--toastTimeout);
+}
+
+input[type='checkbox']:checked + .toast-message {
+	animation-delay: 0ms;
+	animation-duration: 300ms;
+}
+
+.toast-message[data-message-type] {
+	@apply !bg-opacity-70 hover:!bg-opacity-100;
+}
+.toast-message[data-message-type='info'] {
+	@apply bg-sky-500;
+}
+.toast-message[data-message-type='success'] {
+	@apply bg-emerald-500;
+}
+.toast-message[data-message-type='warning'] {
+	@apply bg-amber-500;
+}
+.toast-message[data-message-type='error'] {
+	@apply bg-red-500;
+}
