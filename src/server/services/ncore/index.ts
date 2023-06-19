@@ -1,7 +1,7 @@
 import { load } from 'cheerio';
 import FormData from 'form-data';
-import type { PaginationDetails, Torrent } from '@/server/types/ncore';
-import { parseTorrentDetails } from '@/server/services/helper/parseTorrentDetails';
+import type { PaginationDetails, Torrent } from './types';
+import { parseTorrentDetails } from '@/server/services/ncore/helper/parseTorrentDetails';
 import { fetchBuilder, MemoryCache } from 'node-fetch-cache';
 
 const cache = new MemoryCache({ ttl: 30_000 });

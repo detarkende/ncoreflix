@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { Ncore } from './ncore';
+import { Ncore } from './index';
 
 describe('Ncore checkLoginExpiration', () => {
 	let ncore: Ncore;
